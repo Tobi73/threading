@@ -1,5 +1,6 @@
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by andreyzaytsev on 20.02.17.
@@ -8,6 +9,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class Thread {
+
+
+    private int timeToWork;
+    private int id;
+
+    /*
 
     private Queue<Process> processQueue;
     private Process processAtWork;
@@ -95,6 +102,7 @@ public class Thread {
         }
     }
 
+
     public void work() throws InterruptedException {
         if(state == States.PROCESS_START){
             processAtWork = processQueue.poll();
@@ -119,8 +127,26 @@ public class Thread {
         }
     }
 
+
     public boolean isReadyToAct(){
         if(!processQueue.isEmpty() || processAtWork != null){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    */
+    public Thread(int id, int timeToWork){
+        this.timeToWork = timeToWork;
+        this.id = id;
+    }
+
+
+    public boolean work() throws InterruptedException {
+        if(timeToWork != 0){
+            timeToWork--;
+            TimeUnit.SECONDS.wait(1);
             return true;
         } else {
             return false;
