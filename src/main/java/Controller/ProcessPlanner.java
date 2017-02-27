@@ -2,6 +2,7 @@ package Controller;
 
 import Interface.IPlanner;
 import Model.Process;
+import Model.States;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -18,9 +19,15 @@ public class ProcessPlanner implements IPlanner {
 
     private int activeProcessWorkTime = 0;
 
+    private States state;
+
     public ProcessPlanner(int timeQuantum, LinkedBlockingQueue<Process> processes){
         this.timeQuantum = timeQuantum;
         this.processes = processes;
+    }
+
+    public Process getActiveProcess(){
+        return activeProcess;
     }
 
     @Override
@@ -37,13 +44,20 @@ public class ProcessPlanner implements IPlanner {
             activeProcess = processes.poll();
         }
         if(isReadyForChange()){
+            System.out.print("Process " + activeProcess.getId() + " is changed to");
             change();
+            System.out.println(" Process" + activeProcess.getId());
+            state = States.PROCESS_CHANGED;
+            return;
         }
         if(!isOver()){
+            System.out.print("Process " + activeProcess.getId() + " is working. " + processes.size() + " processes are waiting");
             activeProcessWorkTime++;
-            activeProcess.work();
+            state = States.PROCESS_WORKING;
         } else {
+            System.out.println("Process " + activeProcess.getId() + " has ended");
             end();
+            state = States.PROCESS_ENDED;
         }
     }
 
@@ -58,7 +72,7 @@ public class ProcessPlanner implements IPlanner {
 
     @Override
     public boolean isEmpty() {
-        if(processes.isEmpty()){
+        if(processes.isEmpty() && activeProcess == null){
             return true;
         } else {
             return false;
@@ -74,6 +88,7 @@ public class ProcessPlanner implements IPlanner {
 
     @Override
     public void end() {
+        activeProcessWorkTime = 0;
         activeProcess = processes.poll();
     }
 }

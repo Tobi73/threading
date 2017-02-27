@@ -9,29 +9,34 @@ public class Process {
 
     private int id;
 
-    private ThreadPlanner planner;
+    private LinkedBlockingQueue<Thread> threads;
 
+    private Thread activeThread;
 
-    public Process(int id, int processTimeQuantum, LinkedBlockingQueue<Thread> threads){
+    public Process(int id, LinkedBlockingQueue<Thread> threads){
         this.id = id;
-        this.planner = new ThreadPlanner(threads, processTimeQuantum);
+        this.threads = threads;
     }
 
     public int getId(){
         return this.id;
     }
 
-    public void work() throws InterruptedException {
-        planner.makeWork();
+    public void setActiveThread(Thread thread){
+        activeThread = thread;
+    }
+
+    public Thread getActiveThread(){
+        return activeThread;
     }
 
     public boolean isOver(){
-        if(planner.isEmpty()){
+        if(threads.isEmpty()){
             return true;
         } else  {
             return false;
         }
     }
 
-
+    
 }

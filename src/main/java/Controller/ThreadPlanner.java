@@ -37,12 +37,18 @@ public class ThreadPlanner implements IPlanner {
             activeThread = threads.poll();
         }
         if(isReadyForChange()){
+            System.out.print("/Thread " + activeThread.getId() + " was changed to ");
             change();
+            System.out.println("Thread " + activeThread.getId());
+            return;
         }
         if(!isOver()){
+            System.out.print("/Thread " + activeThread.getId() + " is working (" + activeThread.getTimeToWork() + "). ");
+            System.out.println(threads.size() + " threads are waiting");
             activeThread.work();
             activeThreadWorkTime++;
         } else {
+            System.out.println("/Thread " + activeThread.getId() + " has ended");
             end();
         }
     }
@@ -57,7 +63,7 @@ public class ThreadPlanner implements IPlanner {
 
     @Override
     public boolean isEmpty() {
-        if(threads.isEmpty()){
+        if(threads.isEmpty() && activeThread == null){
             return true;
         } else {
             return false;

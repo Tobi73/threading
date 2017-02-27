@@ -16,8 +16,12 @@ public class Thread {
         this.id = id;
     }
 
+    public int getId(){
+        return id;
+    }
+
     public void work() throws InterruptedException {
-        TimeUnit.SECONDS.wait(1);
+        TimeUnit.SECONDS.sleep(1);
         timeToWork--;
     }
 
@@ -36,5 +40,6 @@ public class Thread {
     public void setTimeToWork(int timeToWork){
         this.timeToWork = timeToWork;
     }
+
 
 }
