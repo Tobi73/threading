@@ -1,6 +1,7 @@
 package Controller;
 
 import Interface.IPlanner;
+import Model.States;
 import Model.Thread;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -13,13 +14,26 @@ public class ThreadPlanner implements IPlanner {
 
     private Thread activeThread;
 
+    private States state;
+
     private int threadTimeQuantum;
 
     private int activeThreadWorkTime = 0;
 
-    public ThreadPlanner(LinkedBlockingQueue<Thread> threads, int processTimeQuantum){
+    public ThreadPlanner(int processTimeQuantum){
+        this.threadTimeQuantum = processTimeQuantum;
+    }
+
+    public void setThreadsToPlan(LinkedBlockingQueue<Thread> threads){
         this.threads = threads;
-        this.threadTimeQuantum = processTimeQuantum/threads.size();
+    }
+
+    public void setActiveThread(Thread thread){
+        this.activeThread = thread;
+    }
+
+    public Thread getActiveThread(){
+        return activeThread;
     }
 
 
@@ -40,6 +54,7 @@ public class ThreadPlanner implements IPlanner {
             System.out.print("/Thread " + activeThread.getId() + " was changed to ");
             change();
             System.out.println("Thread " + activeThread.getId());
+            state = States.PROCESS_CHANGED;
             return;
         }
         if(!isOver()){
@@ -47,9 +62,11 @@ public class ThreadPlanner implements IPlanner {
             System.out.println(threads.size() + " threads are waiting");
             activeThread.work();
             activeThreadWorkTime++;
+            state = States.PROCESS_WORKING;
         } else {
             System.out.println("/Thread " + activeThread.getId() + " has ended");
             end();
+            state = States.PROCESS_ENDED;
         }
     }
 

@@ -1,8 +1,8 @@
 package Controller;
 
 import Interface.IPlanner;
+import Model.*;
 import Model.Process;
-import Model.States;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -15,26 +15,21 @@ public class ProcessPlanner implements IPlanner {
 
     private Process activeProcess;
 
+    private ThreadPlanner planner;
+
     private int timeQuantum;
 
-    private int activeProcessWorkTime = 0;
-
-    private States state;
-
-    public ProcessPlanner(int timeQuantum, LinkedBlockingQueue<Process> processes){
+    public ProcessPlanner(int timeQuantum, LinkedBlockingQueue<Process> processes, ThreadPlanner planner){
         this.timeQuantum = timeQuantum;
         this.processes = processes;
-    }
-
-    public Process getActiveProcess(){
-        return activeProcess;
+        this.planner = planner;
     }
 
     @Override
     public boolean isReadyForChange() {
-        if(activeProcessWorkTime == timeQuantum){
-            return true;
-        }
+        //if(activeProcessWorkTime == timeQuantum){
+        //    return true;
+        //}
         return false;
     }
 
@@ -47,27 +42,26 @@ public class ProcessPlanner implements IPlanner {
             System.out.print("Process " + activeProcess.getId() + " is changed to");
             change();
             System.out.println(" Process" + activeProcess.getId());
-            state = States.PROCESS_CHANGED;
             return;
         }
         if(!isOver()){
             System.out.print("Process " + activeProcess.getId() + " is working. " + processes.size() + " processes are waiting");
-            activeProcessWorkTime++;
-            state = States.PROCESS_WORKING;
+            //activeProcess.
+            //planner.makeWork();
         } else {
             System.out.println("Process " + activeProcess.getId() + " has ended");
             end();
-            state = States.PROCESS_ENDED;
         }
     }
 
     @Override
     public boolean isOver() {
-        if(activeProcess.isOver()){
-            return true;
-        } else {
-            return false;
-        }
+        //if(activeProcess.isOver()){
+        //    return true;
+        //} else {
+        //    return false;
+        //}
+        return false;
     }
 
     @Override
@@ -81,14 +75,12 @@ public class ProcessPlanner implements IPlanner {
 
     @Override
     public void change() {
-        activeProcessWorkTime = 0;
         processes.add(activeProcess);
         activeProcess = processes.poll();
     }
 
     @Override
     public void end() {
-        activeProcessWorkTime = 0;
         activeProcess = processes.poll();
     }
 }

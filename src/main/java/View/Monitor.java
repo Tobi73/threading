@@ -16,26 +16,31 @@ public class Monitor {
 
     public static void main(String[] args) {
         LinkedBlockingQueue<Process> processes = new LinkedBlockingQueue<>();
-        LinkedBlockingQueue<ThreadPlanner> threadPlanners = new LinkedBlockingQueue<>();
-        int timeQuantum = 30;
+        LinkedBlockingQueue<Thread> allThreads = new LinkedBlockingQueue<>();
+        int timeQuantum = 15;
         Random rand = new Random();
         for(int i = 0; i < 3; i++){
             LinkedBlockingQueue<Thread> threads = new LinkedBlockingQueue<>();
             for(int j = 0; j < rand.nextInt(5) + 1; j++){
                 threads.add(new Thread(rand.nextInt(5) + 15, j));
             }
-            threads.addAll(threads);
-            threadPlanners.add(new ThreadPlanner(threads, timeQuantum/threads.size()));
+            allThreads.addAll(threads);
             processes.add(new Process(i, threads));
         }
-        ProcessPlanner planner = new ProcessPlanner(timeQuantum, processes);
-        while(!planner.isEmpty()){
-            try {
-                planner.makeWork();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        ThreadPlanner planner = new ThreadPlanner(timeQuantum);
+        for(Process process : processes){
+            planner.setThreadsToPlan(process.getThreads());
+            while (!planner.isEmpty()){
+                try {
+                    System.out.print("Process " + process.getId() + " is working");
+                    planner.makeWork();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            System.out.println("Process " + process.getId() + " has ended");
         }
+
     }
 
 
