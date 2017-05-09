@@ -1,7 +1,6 @@
 package Controller;
 
 import Interface.IPlanner;
-import Model.States;
 import Model.Thread;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,26 +13,22 @@ public class ThreadPlanner implements IPlanner {
 
     private Thread activeThread;
 
-    private States state;
-
     private int threadTimeQuantum;
 
     private int activeThreadWorkTime = 0;
 
-    public ThreadPlanner(int processTimeQuantum){
-        this.threadTimeQuantum = processTimeQuantum;
-    }
+    public String infoState = "Initializing";
 
-    public void setThreadsToPlan(LinkedBlockingQueue<Thread> threads){
+    public void setThreadsToPlan(LinkedBlockingQueue<Thread> threads, int processTimeQuantum){
         this.threads = threads;
-    }
-
-    public void setActiveThread(Thread thread){
-        this.activeThread = thread;
-    }
-
-    public Thread getActiveThread(){
-        return activeThread;
+        int threadsNum = threads.size();
+        if(activeThread != null){
+            threadsNum++;
+        }
+        threadTimeQuantum = processTimeQuantum/threadsNum;
+        if(threadTimeQuantum == 0){
+            threadTimeQuantum = 1;
+        }
     }
 
 
@@ -51,22 +46,19 @@ public class ThreadPlanner implements IPlanner {
             activeThread = threads.poll();
         }
         if(isReadyForChange()){
-            System.out.print("/Thread " + activeThread.getId() + " was changed to ");
+            infoState = "/Thread " + activeThread.getId() + " was changed to ";
             change();
-            System.out.println("Thread " + activeThread.getId());
-            state = States.PROCESS_CHANGED;
+            infoState+= "Thread " + activeThread.getId();
             return;
         }
         if(!isOver()){
-            System.out.print("/Thread " + activeThread.getId() + " is working (" + activeThread.getTimeToWork() + "). ");
-            System.out.println(threads.size() + " threads are waiting");
-            activeThread.work();
             activeThreadWorkTime++;
-            state = States.PROCESS_WORKING;
+            infoState = "/Thread " + activeThread.getId() + " is working (" + activeThread.getTimeToWork() + "). ";
+            infoState+=threads.size() + " threads are waiting. Working time - (" + activeThreadWorkTime + "/" + threadTimeQuantum + ")";
+            activeThread.work();
         } else {
-            System.out.println("/Thread " + activeThread.getId() + " has ended");
+            infoState = "/Thread " + activeThread.getId() + " has ended";
             end();
-            state = States.PROCESS_ENDED;
         }
     }
 

@@ -37,9 +37,5 @@ public class Thread {
         return this.timeToWork;
     }
 
-    public void setTimeToWork(int timeToWork){
-        this.timeToWork = timeToWork;
-    }
-
 
 }

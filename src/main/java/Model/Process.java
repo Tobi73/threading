@@ -1,5 +1,4 @@
 package Model;
-import Controller.ThreadPlanner;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -9,11 +8,14 @@ public class Process {
 
     private int id;
 
+    private MemoryPage[] virtualMemory;
+
     private LinkedBlockingQueue<Thread> threads;
 
-    public Process(int id, LinkedBlockingQueue<Thread> threads){
+    public Process(int id, LinkedBlockingQueue<Thread> threads, MemoryPage[] virtualMemory){
         this.id = id;
         this.threads = threads;
+        this.virtualMemory = virtualMemory;
     }
 
     public int getId(){
@@ -22,6 +24,10 @@ public class Process {
 
     public LinkedBlockingQueue<Thread> getThreads(){
         return threads;
+    }
+
+    public MemoryPage[] getVirtualMemory(){
+        return virtualMemory;
     }
 
     
