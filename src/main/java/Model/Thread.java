@@ -21,8 +21,26 @@ public class Thread {
     }
 
     public void work() throws InterruptedException {
-        TimeUnit.SECONDS.sleep(1);
+//        TimeUnit.SECONDS.sleep(1);
         timeToWork--;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Thread)) return false;
+
+        Thread thread = (Thread) o;
+
+        if (getTimeToWork() != thread.getTimeToWork()) return false;
+        return getId() == thread.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getTimeToWork();
+        result = 31 * result + getId();
+        return result;
     }
 
     public boolean isOver(){

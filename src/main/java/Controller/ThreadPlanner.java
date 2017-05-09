@@ -9,13 +9,13 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class ThreadPlanner implements IPlanner {
 
-    private LinkedBlockingQueue<Thread> threads;
+    protected LinkedBlockingQueue<Thread> threads;
 
-    private Thread activeThread;
+    protected Thread activeThread;
 
-    private int threadTimeQuantum;
+    protected int threadTimeQuantum;
 
-    private int activeThreadWorkTime = 0;
+    protected int activeThreadWorkTime = 0;
 
     public String infoState = "Initializing";
 
@@ -24,6 +24,10 @@ public class ThreadPlanner implements IPlanner {
         int threadsNum = threads.size();
         if(activeThread != null){
             threadsNum++;
+        }
+        if(threadsNum == 0){
+            threadTimeQuantum = 1;
+            return;
         }
         threadTimeQuantum = processTimeQuantum/threadsNum;
         if(threadTimeQuantum == 0){
