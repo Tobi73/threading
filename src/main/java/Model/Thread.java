@@ -1,5 +1,6 @@
 package Model;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -9,14 +10,14 @@ public class Thread {
 
     private int timeToWork;
 
-    private int id;
+    private UUID id;
 
-    public Thread(int timeToWork, int id){
+    public Thread(int timeToWork, UUID id){
         this.timeToWork = timeToWork;
         this.id = id;
     }
 
-    public int getId(){
+    public UUID getId(){
         return id;
     }
 
@@ -39,7 +40,7 @@ public class Thread {
     @Override
     public int hashCode() {
         int result = getTimeToWork();
-        result = 31 * result + getId();
+        result = 31 * result + (getId() != null ? getId().hashCode() : 0);
         return result;
     }
 

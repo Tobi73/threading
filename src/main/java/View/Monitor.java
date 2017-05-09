@@ -9,10 +9,7 @@ import Model.MemoryPage;
 import Model.Thread;
 import Model.Process;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +34,7 @@ public class Monitor {
         for(int i = 0; i < 3; i++){
             LinkedBlockingQueue<Thread> threads = new LinkedBlockingQueue<>();
             for(int j = 0; j < 5; j++){
-                threads.add(new Thread(10, j));
+                threads.add(new Thread(10, UUID.randomUUID()));
             }
             allThreads.addAll(threads);
             MemoryPage[] virtualMemory = new MemoryPage[15];
@@ -56,7 +53,7 @@ public class Monitor {
         }
         try {
             MemoryManager manager = new MemoryManager(physicalMemory, swap, processes);
-            ThreadPlannerIOLock planner = new ThreadPlannerIOLock(5, 15);
+            ThreadPlannerIOLock planner = new ThreadPlannerIOLock(5, 40);
             while (!processes.isEmpty()){
                 Iterator<Process> iterator = processes.iterator();
                 while(iterator.hasNext()){
@@ -101,7 +98,7 @@ public class Monitor {
         for(int i = 0; i < 3; i++){
             LinkedBlockingQueue<Thread> threads = new LinkedBlockingQueue<>();
             for(int j = 0; j < 5; j++){
-                threads.add(new Thread(10, j));
+                threads.add(new Thread(10, UUID.randomUUID()));
             }
             allThreads.addAll(threads);
             MemoryPage[] virtualMemory = new MemoryPage[15];
@@ -120,7 +117,7 @@ public class Monitor {
         }
         try {
             MemoryManager manager = new MemoryManager(physicalMemory, swap, processes);
-            ThreadPlannerIOLock planner = new ThreadPlannerDMA(5, 15);
+            ThreadPlannerDMA planner = new ThreadPlannerDMA(5, 40);
             while (!processes.isEmpty()){
                 Iterator<Process> iterator = processes.iterator();
                 while(iterator.hasNext()){
@@ -137,6 +134,9 @@ public class Monitor {
                         // TimeUnit.SECONDS.sleep(1);
                         workTime++;
                         System.out.println("Time passed: " + planner.getTimeCounter());
+                        if(planner.areAllThreadsBusy(process.getThreads())){
+                            break;
+                        }
                     }
                     workTime=0;
                     if (planner.isEmpty()){

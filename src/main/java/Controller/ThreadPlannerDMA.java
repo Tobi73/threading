@@ -4,18 +4,28 @@ import Model.Thread;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by gman0_000 on 09.05.2017.
  */
 public class ThreadPlannerDMA extends ThreadPlannerIOLock {
 
-    private Map<Thread, Integer> DMAMap;
+    private static Map<Thread, Integer> DMAMap;
+
+    public static Map<Thread, Integer> getDMAInstance(){
+        if(DMAMap == null){
+            DMAMap = new HashMap<>();
+            return DMAMap;
+        } else return DMAMap;
+    }
 
     public ThreadPlannerDMA(int ioLockChance, int ioLockRandTime) {
         super(ioLockChance, ioLockRandTime);
-        DMAMap = new HashMap<>();
+        DMAMap = getDMAInstance();
     }
 
     @Override
@@ -80,5 +90,14 @@ public class ThreadPlannerDMA extends ThreadPlannerIOLock {
             }
         }
         DMAMap.putAll(tempMap);
+    }
+
+    public boolean areAllThreadsBusy(LinkedBlockingQueue<Thread> threads){
+        for(Thread thread : threads){
+            if(!DMAMap.containsKey(thread)){
+                return false;
+            }
+        }
+        return true;
     }
 }
